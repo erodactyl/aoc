@@ -13,8 +13,7 @@ let rec calculate_cost
 
   let rec calculate_cost
       ({ curr = (curr_x, curr_y) as curr; a_count; b_count; _ } as game) step =
-    print_game game;
-    if step > 100 then None
+    if step > 5 then None
     else if dest = curr then Some (get_game_cost game)
     else if curr_x > dest_x || curr_y > dest_y then
       if b_count = 0 then None
@@ -36,7 +35,6 @@ and fill_with_bs ({ dest = dest_x, dest_y; db = dbx, dby; _ } as game) =
   { game with curr; b_count }
 
 and add_as ({ dest; curr; da = dax, day; _ } as game) =
-  print_game game;
   if dest = curr then Some game
   else
     let diff_x, diff_y = diff dest curr in
@@ -48,7 +46,6 @@ and add_as ({ dest; curr; da = dax, day; _ } as game) =
       remove_bs { game with curr; a_count = game.a_count + a_add }
 
 and remove_bs ({ dest; curr; db = dbx, dby; _ } as game) =
-  print_game game;
   if dest = curr then Some game
   else
     let diff_x, diff_y = diff dest curr in
@@ -60,15 +57,7 @@ and remove_bs ({ dest; curr; db = dbx, dby; _ } as game) =
       add_as { game with curr; b_count = game.b_count - b_remove }
 
 let sum_costs acc game =
-  acc
-  +
-  match calculate_cost game with
-  | None ->
-      print_endline "No solution";
-      0
-  | Some cost ->
-      Printf.printf "Cost: %d\n" cost;
-      cost
+  acc + match calculate_cost game with None -> 0 | Some cost -> cost
 
 let () =
   let games = parse "input.txt" in
