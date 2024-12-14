@@ -15,7 +15,7 @@ and parse_games lines =
         let px, py = parse_line prize in
         let game =
           {
-            dest = (px, py);
+            dest = (px + 10000000000000, py + 10000000000000);
             curr = (0, 0);
             da = (ax, ay);
             db = (bx, by);

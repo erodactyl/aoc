@@ -11,22 +11,21 @@ let rec calculate_cost
   let game = fill_with_bs game in
   let game = add_as game in
 
-  print_endline "\nFilled\n\n";
-
   let rec calculate_cost
-      ({ curr = (curr_x, curr_y) as curr; a_count; b_count; _ } as game) =
+      ({ curr = (curr_x, curr_y) as curr; a_count; b_count; _ } as game) step =
     print_game game;
-    if dest = curr then Some (get_game_cost game)
+    if step > 100 then None
+    else if dest = curr then Some (get_game_cost game)
     else if curr_x > dest_x || curr_y > dest_y then
       if b_count = 0 then None
       else
         let curr = move curr (-dbx, -dby) in
-        calculate_cost { game with curr; b_count = b_count - 1 }
+        calculate_cost { game with curr; b_count = b_count - 1 } (step + 1)
     else
       let curr = move curr (dax, day) in
-      calculate_cost { game with curr; a_count = a_count + 1 }
+      calculate_cost { game with curr; a_count = a_count + 1 } (step + 1)
   in
-  match game with None -> None | Some game -> calculate_cost game
+  match game with None -> None | Some game -> calculate_cost game 0
 
 and fill_with_bs ({ dest = dest_x, dest_y; db = dbx, dby; _ } as game) =
   (* fill with only bs *)
@@ -73,10 +72,10 @@ let sum_costs acc game =
 
 let () =
   let games = parse "input.txt" in
-  match games with
-  | _ :: _ :: _ :: game :: _ ->
-      let _ = calculate_cost game in
-      ()
-  | _ -> failwith "Invalid"
-(*let cost = List.fold_left sum_costs 0 games in*)
-(*print_endline (string_of_int cost)*)
+  (*match games with*)
+  (*| _ :: _ :: _ :: game :: _ ->*)
+  (*    let _ = calculate_cost game in*)
+  (*    ()*)
+  (*| _ -> failwith "Invalid"*)
+  let cost = List.fold_left sum_costs 0 games in
+  print_endline (string_of_int cost)
